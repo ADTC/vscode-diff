@@ -21,11 +21,11 @@ const writeTemp = (path: string, data: string): Promise<void> => {
 export function activate(context: vscode.ExtensionContext) {
 
 	let disposable = vscode.commands.registerCommand('extension.viewAllDiffInOneBuffer', async () => {
-		const filename = Math.random().toString(36).slice(2) + '.diff'
+		const filename = 'ht' + Math.random().toString(36).slice(2) + '.diff'
 		const path = vscode.workspace.rootPath;
-		const temp = `${path}/.git/.huytd/${filename}`;
+		const temp = `${path}/.git/${filename}`;
 		// Windows commands ("del" won't work in *nix!)
-		await execute(`cd ${path}/.git && mkdir .huytd & cd .huytd && del /Q *.diff`);
+		await execute(`cd ${path}/.git && del /Q ht*.diff`);
 		const output: string = await execute(`cd ${path} && git diff`);
 		await writeTemp(temp, output);
 		const uri = vscode.Uri.file(temp);

@@ -29,8 +29,10 @@ export function activate(context: vscode.ExtensionContext) {
 		const output: string = await execute(`cd ${path} && git diff`);
 		await writeTemp(temp, output);
 		const uri = vscode.Uri.file(temp);
-		const doc = await vscode.workspace.openTextDocument(uri);
-		await vscode.window.showTextDocument(doc, { preview: false });
+		//const doc = await vscode.workspace.openTextDocument(uri);
+		//await vscode.window.showTextDocument(doc, { preview: false });
+		vscode.commands.executeCommand("vscode.openWith", uri, "diffViewer",
+					       { preview: true, preserveFocus: false });
 	});
 
 	context.subscriptions.push(disposable);

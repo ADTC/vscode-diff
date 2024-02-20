@@ -21,13 +21,18 @@ const writeTemp = (path: string, data: string): Promise<void> => {
 export function activate(context: vscode.ExtensionContext) {
 
 	let disposable = vscode.commands.registerCommand('extension.viewAllDiffInOneBuffer', async () => {
+		const filename = 'ht' + Math.random().toString(36).slice(2) + '.diff'
 		const path = vscode.workspace.rootPath;
-		const temp = '/tmp/vscode-diff.patch';
+		// Windows commands ("del" won't work in *nix!)
+		await execute(`cd ${path}/.git && del /Q ht*.diff`);
+		const temp = `${path}/.git/${filename}`;
 		const output: string = await execute(`cd ${path} && git diff`);
 		await writeTemp(temp, output);
 		const uri = vscode.Uri.file(temp);
-		const doc = await vscode.workspace.openTextDocument(uri);
-		await vscode.window.showTextDocument(doc, { preview: false });
+		//const doc = await vscode.workspace.openTextDocument(uri);
+		//await vscode.window.showTextDocument(doc, { preview: false });
+		await vscode.commands.executeCommand("vscode.openWith", uri, "diffViewer",
+				{ preview: true, preserveFocus: false });
 	});
 
 	context.subscriptions.push(disposable);
